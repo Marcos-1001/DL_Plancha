@@ -8,7 +8,7 @@ import numpy as np
 import sys
 import torchvision.transforms as T
 import os
-
+from tqdm import tqdm
 #torch.transforms
 
 #grayscale
@@ -85,7 +85,6 @@ def augment_image(img_path):
     
     #gausian_image_6.show()
     
-    gausian_image_9 = addnoise(orig_img,0.9)
 
     #gausian_image_9.show()
 
@@ -105,27 +104,39 @@ def augment_image(img_path):
 
     #colour_jitter_image_3.show()
 
-    return [orig_img,grayscaled_image,random_rotation_transformation_45_image,random_rotation_transformation_65_image,random_rotation_transformation_85_image,gausian_blurred_image_13_image,gausian_blurred_image_56_image,gausian_image_3,gausian_image_6,gausian_image_9,colour_jitter_image_1,colour_jitter_image_2,colour_jitter_image_3]
+    return [
+    grayscaled_image,
+    random_rotation_transformation_45_image,
+    random_rotation_transformation_65_image,
+    random_rotation_transformation_85_image,
+    gausian_blurred_image_13_image,
+    gausian_image_3,
+    gausian_image_6,
+    colour_jitter_image_2,colour_jitter_image_3
+    ]
 
 #augmented_images = augment_image(orig_img_path)
 
-def creating_file_with_augmented_images(folder_path ):
-
-    for file in os.listdir(folder_path):
-        if file.endswith(".jpg"):
+def creating_file_with_augmented_images(folder_path, csv_file ):
+    csv_file = open(csv_file, "a")
+    for file in tqdm(os.listdir(folder_path)):
+        if file.endswith(".png") or file.endswith(".jpg"):
             images = augment_image(folder_path+"/"+file)
             for i in range(len(images)):
-                images[i].save(folder_path+"/"+file[:-4]+"_augmented_"+str(i)+".jpg")
+                images[i].save(folder_path+"/augmented/"+file[:-4]+"_augmented_"+str(i)+".png")
+                #csv_file.write(file[:-4]+"_augmented_"+str(i)+".png\n")
     
     
 
 
 #augmented dataset path
-classes = ['buildings', 'forest', 'glacier', 'mountain', 'sea', 'street']
+
+csv_file = "/teamspace/studios/this_studio/augmented_"
+classes = ['train_1', 'train_2', 'train_3']
 # master dataset path
 for i in range(6):
-    folder_path = "data/seg_train/seg_train/"+classes[i]+"/"    
-    creating_file_with_augmented_images(folder_path)
+    folder_path = "/teamspace/studios/this_studio/NIVEL1/NIVEL1/TRAIN/"+classes[i]+"/"    
+    creating_file_with_augmented_images(folder_path, csv_file+classes[i]+".csv")
 
 
 # run the program
